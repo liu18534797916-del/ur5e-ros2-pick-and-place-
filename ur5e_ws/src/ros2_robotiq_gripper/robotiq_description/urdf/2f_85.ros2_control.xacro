@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="robotiq_gripper_ros2_control" params="
+      name
+      prefix
+      sim_gazebo:=false
+      sim_isaac:=false
+      isaac_joint_commands:=/isaac_joint_commands
+      isaac_joint_states:=/isaac_joint_states
+      use_fake_hardware:=false
+      mock_sensor_commands:=false
+      com_port:=/dev/ttyUSB0
+      gripper_speed_multiplier:=1.0
+      gripper_force_multiplier:=0.5
+      gripper_max_speed:=0.150
+      gripper_max_force:=235.0
+      gripper_closed_position:=0.7929">
+
+    <ros2_control name="${name}" type="system">
+
+      <hardware>
+
+        <xacro:if value="${use_fake_hardware}">
+          <plugin>mock_components/GenericSystem</plugin>
+        </xacro:if>
+
+        <xacro:if value="${sim_isaac}">
+          <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
+        </xacro:if>
+
+        <xacro:if value="${sim_gazebo}">
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </xacro:if>
+
+        <xacro:unless value="${use_fake_hardware or sim_gazebo or sim_isaac}">
+          <plugin>robotiq_driver/RobotiqGripperHardwareInterface</plugin>
+        </xacro:unless>
+
+      </hardware>
+
+      <joint name="${prefix}robotiq_85_left_knuckle_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <joint name="${prefix}robotiq_85_right_knuckle_joint">
+        <param name="mimic">${prefix}robotiq_85_left_knuckle_joint</param>
+        <param name="multiplier">-1</param>
+
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+    </ros2_control>
+
+  </xacro:macro>
+
+</robot>

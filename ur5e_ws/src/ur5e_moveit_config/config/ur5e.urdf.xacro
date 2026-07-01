@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5e">
+    <xacro:arg name="initial_positions_file"
+               default="$(find ur5e_moveit_config)/config/initial_positions.yaml"/>
+
+    <!-- World -->
+    <link name="world"/>
+
+    <!-- UR description -->
+    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+
+    <!-- Robotiq gripper -->
+    <xacro:include
+        filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro"/>
+
+    <!-- Mock ros2_control -->
+    <xacro:include filename="ur5e.ros2_control.xacro"/>
+
+    <!-- UR5e robot (same pose as Gazebo URDF) -->
+    <xacro:ur_robot
+        name="ur5e"
+        tf_prefix=""
+        parent="world"
+        joint_limits_parameters_file="$(find ur_description)/config/ur5e/joint_limits.yaml"
+        kinematics_parameters_file="$(find ur_description)/config/ur5e/default_kinematics.yaml"
+        physical_parameters_file="$(find ur_description)/config/ur5e/physical_parameters.yaml"
+        visual_parameters_file="$(find ur_description)/config/ur5e/visual_parameters.yaml"
+        safety_limits="false"
+        safety_pos_margin="0.15"
+        safety_k_position="20">
+      <origin xyz="0 0 0.80" rpy="0 0 -1.5708"/>
+    </xacro:ur_robot>
+
+    <!-- Robotiq 85 gripper with mock hardware -->
+    <xacro:robotiq_gripper
+        name="gripper"
+        prefix=""
+        parent="tool0"
+        sim_gazebo="false"
+        use_fake_hardware="true"
+        com_port="">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:robotiq_gripper>
+
+    <!-- ros2_control with mock hardware -->
+    <xacro:ur5e_ros2_control
+        name="ur5e"
+        initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

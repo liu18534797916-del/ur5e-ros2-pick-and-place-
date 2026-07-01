@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="aruco_marker">
+    <static>true</static>
+    <link name="marker_link">
+      <pose>0 0 0.101 0 0 0</pose>
+      <visual name="marker_visual">
+        <geometry>
+          <box>
+            <size>0.04 0.04 0.001</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
